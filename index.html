@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flo.House - Управление умным домом</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flo.House</h1>
+            <p>Управление умным домом</p>
+        </header>
 
+        <section class="sensors-panel">
+            <div class="panel-header">
+                <h2>Датчики и сценарии</h2>
+            </div>
+            
+            <div class="sensors-grid">
+                <div class="sensor-card">
+                    <div class="sensor-header">
+                        <span class="sensor-icon">⛈️</span>
+                        <h3>Датчик грозы</h3>
+                    </div>
+                    <div class="sensor-status" id="thunderStatus">Выключен</div>
+                    <div class="sensor-controls">
+                        <button class="btn btn-sensor" id="thunderOnBtn" onclick="toggleThunder()">Гроза (вкл)</button>
+                        <button class="btn btn-sensor" id="thunderOffBtn" onclick="clearThunder()">Ясно (выкл)</button>
+                    </div>
+                </div>
+
+                <div class="sensor-card">
+                    <div class="sensor-header">
+                        <span class="sensor-icon">👤</span>
+                        <h3>Датчик движения</h3>
+                    </div>
+                    <div class="sensor-status" id="motionStatus">Есть движение</div>
+                    <div class="sensor-controls">
+                        <button class="btn btn-sensor" id="motionOnBtn" onclick="setMotion(true)">Движение есть (вкл)</button>
+                        <button class="btn btn-sensor" id="motionOffBtn" onclick="setMotion(false)">Движения нет (выкл)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auto-settings">
+                <div class="setting-item">
+                    <label>Автосценарий "Гроза"</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoThunder" onchange="toggleAutoThunder(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>Автосценарий "Никого нет"</label>
+                    <label class="switch">
+                        <input type="checkbox" id="autoNoOne" onchange="toggleAutoNoOne(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="devices-section">
+            <div class="section-header">
+                <h2>Устройства</h2>
+            </div>
+
+            <div class="devices-grid">
+                <div class="device-card light-card">
+                    <h3>Свет: Кухня</h3>
+                    <div class="light-status" id="kitchenLightStatus">Выкл</div>
+                    <div class="light-controls">
+                        <div class="light-buttons">
+                            <button class="btn btn-sm btn-light" id="kitchenLightOnBtn" onclick="turnLightOn('kitchen')">Вкл</button>
+                            <button class="btn btn-sm btn-light" id="kitchenLightOffBtn" onclick="turnLightOff('kitchen')">Выкл</button>
+                        </div>
+                        <input type="range" min="0" max="100" value="0" id="kitchenBrightness" 
+                               onchange="setBrightness('kitchen', this.value)">
+                        <span id="kitchenBrightnessValue">0%</span>
+                    </div>
+                </div>
+
+                <div class="device-card light-card">
+                    <h3>Свет: Гостиная</h3>
+                    <div class="light-status" id="livingLightStatus">Выкл</div>
+                    <div class="light-controls">
+                        <div class="light-buttons">
+                            <button class="btn btn-sm btn-light" id="livingLightOnBtn" onclick="turnLightOn('living')">Вкл</button>
+                            <button class="btn btn-sm btn-light" id="livingLightOffBtn" onclick="turnLightOff('living')">Выкл</button>
+                        </div>
+                        <input type="range" min="0" max="100" value="0" id="livingBrightness" 
+                               onchange="setBrightness('living', this.value)">
+                        <span id="livingBrightnessValue">0%</span>
+                    </div>
+                </div>
+
+                <div class="device-card light-card">
+                    <h3>Свет: Спальня</h3>
+                    <div class="light-status" id="bedroomLightStatus">Выкл</div>
+                    <div class="light-controls">
+                        <div class="light-buttons">
+                            <button class="btn btn-sm btn-light" id="bedroomLightOnBtn" onclick="turnLightOn('bedroom')">Вкл</button>
+                            <button class="btn btn-sm btn-light" id="bedroomLightOffBtn" onclick="turnLightOff('bedroom')">Выкл</button>
+                        </div>
+                        <input type="range" min="0" max="100" value="0" id="bedroomBrightness" 
+                               onchange="setBrightness('bedroom', this.value)">
+                        <span id="bedroomBrightnessValue">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="device-card washer-card">
+                <h3>Стиральная машина</h3>
+                <div class="washer-status" id="washerStatus">Остановлена</div>
+                
+                <div class="washer-programs">
+                    <button class="program-btn" data-program="cotton" onclick="updateWasherProgram('cotton')">Хлопок</button>
+                    <button class="program-btn" data-program="delicate" onclick="updateWasherProgram('delicate')">Деликатная</button>
+                    <button class="program-btn" data-program="synthetic" onclick="updateWasherProgram('synthetic')">Синтетика</button>
+                    <button class="program-btn" data-program="quick" onclick="updateWasherProgram('quick')">Быстрая</button>
+                </div>
+                
+                <div class="washer-time-temp">
+                    <div class="time-temp-item">
+                        <label>Время (мин)</label>
+                        <select id="washerTime" onchange="updateWasherTime(this.value)">
+                            <option value="30">30 мин</option>
+                            <option value="60" selected>60 мин</option>
+                            <option value="90">90 мин</option>
+                        </select>
+                    </div>
+                    <div class="time-temp-item">
+                        <label>Температура</label>
+                        <select id="washerTemp" onchange="updateWasherTemp(this.value)">
+                            <option value="30">30°C</option>
+                            <option value="40" selected>40°C</option>
+                            <option value="60">60°C</option>
+                            <option value="90">90°C</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="water-info">
+                    Расход воды: <span id="washerWaterUsed">0</span> литров
+                </div>
+                
+                <div class="washer-controls">
+                    <button class="btn btn-washer" id="washerStartBtn" onclick="washerStart()">Запуск</button>
+                    <button class="btn btn-washer" id="washerPauseBtn" onclick="washerPause()">Пауза</button>
+                    <button class="btn btn-washer" id="washerStopBtn" onclick="washerStop()">Стоп</button>
+                </div>
+            </div>
+
+            <div class="device-card router-card">
+                <h3>Роутер</h3>
+                
+                <div class="router-stats">
+                    <div class="router-stat">
+                        <div class="label">Скорость</div>
+                        <div class="value" id="routerSpeedValue">100 Мбит/с</div>
+                    </div>
+                    <div class="router-stat">
+                        <div class="label">Загрузка</div>
+                        <div class="value" id="routerLoadValue">0%</div>
+                    </div>
+                    <div class="router-stat">
+                        <div class="label">Мощность</div>
+                        <div class="value" id="routerPower">100%</div>
+                    </div>
+                    <div class="router-stat">
+                        <div class="label">Статус</div>
+                        <div class="value" id="routerStatusText">Готов</div>
+                    </div>
+                </div>
+                
+                <div class="router-buttons">
+                    <button class="btn btn-sm btn-router" id="routerOnBtn" onclick="routerOn()">Включить</button>
+                    <button class="btn btn-sm btn-router" id="routerOffBtn" onclick="routerOff()">Выключить</button>
+                    <button class="btn btn-sm btn-router" id="routerRebootBtn" onclick="routerReboot()">Перезагрузить</button>
+                </div>
+                
+                <div class="router-controls">
+                    <input type="range" min="10" max="100" value="100" id="routerPowerSlider" 
+                           onchange="setRouterPower(this.value)">
+                </div>
+            </div>
+        </section>
+
+        <section class="notifications">
+            <div class="notifications-header">
+                <h3>Уведомления</h3>
+                <button class="btn btn-sm btn-clear" onclick="clearNotifications()">Очистить</button>
+            </div>
+            <div class="notifications-list" id="notificationsList"></div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
